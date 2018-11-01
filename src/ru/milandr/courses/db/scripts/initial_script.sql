@@ -26,6 +26,7 @@ INSERT INTO "addresses" (id,address,city,postal_code) VALUES (7,'5375 Non St.','
 INSERT INTO "addresses" (id,address,city,postal_code) VALUES (8,'Ap #625-9099 Sed Street','Edmundston','10909');
 INSERT INTO "addresses" (id,address,city,postal_code) VALUES (9,'P.O. Box 201, 7310 Neque Av.','Gaasbeek','8522');
 INSERT INTO "addresses" (id,address,city,postal_code) VALUES (10,'244-7489 Morbi Avenue','Pichilemu','839549');
+INSERT INTO "addresses" (id,address,city,postal_code) VALUES (11,'22-231 Winston Avenue','New Yourk','12351');
 
 INSERT INTO "users" (id,first_name,last_name,address_id,phone_number) VALUES (1,'Beatrice','Clay',10,'1622060902999');
 INSERT INTO "users" (id,first_name,last_name,address_id,phone_number) VALUES (2,'Eric','Maynard',9,'1629022861299');
