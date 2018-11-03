@@ -1,4 +1,4 @@
-package ru.milandr.courses;
+package ru.milandr.courses.db.scripts;
 
 public class Application {
     public static void main(String[] args) {
