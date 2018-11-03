@@ -107,10 +107,9 @@ public class Main {
             Optional sum = addressesList.stream().reduce((a, b) -> a + b);
 
             if (sum.isPresent()) {
-                result = (double)sum.get();
+                result = (double) sum.get();
                 System.out.printf("\nAverage postal code:\n%.3f\n", result / size);
-            }
-            else
+            } else
                 System.out.println("ERROR with summation of postal codes");
 
             //task5
