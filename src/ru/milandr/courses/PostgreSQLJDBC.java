@@ -1,5 +1,7 @@
 package ru.milandr.courses;
 
+//import com.sun.deploy.util.StringUtils;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -8,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import java.lang.Object;
 
 public class PostgreSQLJDBC {
     public static void main(String args[]) {
@@ -56,16 +60,32 @@ public class PostgreSQLJDBC {
             //sorry, I didn't know if it was necessary to print surnames
             //so I just printed in an ArrayList
             //hope, it won't be bad :3
-            System.out.println(nameList);
+            System.out.println(nameList+"\n");
 //----------------------------------------------------------------------------
+            ResultSet rs4 = stmt.executeQuery( "SELECT postal_code FROM addresses;" );
+            ArrayList<Integer> indexs = new ArrayList<>();
+            while(rs4.next()) {
+                int index = 0;
+                boolean numeric = true;
+                try {
+                    index = Integer.parseInt(rs4.getString("postal_code"));
+                } catch (NumberFormatException e) {
+                    numeric = false;
+                }
 
+                indexs.add(index);
+            }
+            int sum = 0;
+            for(int j = 0; j < indexs.size(); j++)
+                sum+= indexs.get(j);
+            System.out.println("The medium number of postal addresses: "+ sum/indexs.size());
+//----------------------------------------------------------------------------
             rs1.close();
             rs2.close();
             rs3.close();
+            rs4.close();
             stmt.close();
             c.close();
-
-
 
         } catch (Exception e) {
             e.printStackTrace();
