@@ -123,14 +123,14 @@ public class Main {
             while (resultSet.next()) {
                 addressId.add(resultSet.getInt("id"));
             }
-            resultSet = stmt.executeQuery("SELECT id from addresses");
+            resultSet = stmt.executeQuery("SELECT id FROM addresses");
             while (resultSet.next()) {
                 if (!addressId.contains(resultSet.getInt("id"))) {
                     addrId = resultSet.getInt("id");
                 }
             }
 
-            preparedStatement = conn.prepareStatement("select * from addresses where id = ?");
+            preparedStatement = conn.prepareStatement("SELECT * FROM addresses WHERE id = ?");
             preparedStatement.setInt(1, addrId);
             resultSet = preparedStatement.executeQuery();
             System.out.println("Address where no one lives: ");
