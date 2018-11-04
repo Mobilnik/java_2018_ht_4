@@ -29,14 +29,13 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         List<String> lastNames = new ArrayList<>();
         List<Integer> addressesList = new ArrayList<>();
         List<Integer> extraAddresses = new ArrayList<>();
         Set<Integer> userAddresses = new HashSet<>();
 
         int size;
-        int biggestInt = 0;
+        int biggestId = 0;
         int result;
 
         ResultSet rs;
@@ -50,11 +49,11 @@ public class Main {
             //task1
             rs = stmt.executeQuery("SELECT id from users");
             while (rs.next()) {
-                if (rs.getInt("id") > biggestInt)
-                    biggestInt = rs.getInt("id");
+                if (rs.getInt("id") > biggestId)
+                    biggestId = rs.getInt("id");
             }
             PreparedStatement pstmt = conn.prepareStatement(" SELECT * FROM users where id = ?");
-            pstmt.setInt(1, biggestInt);
+            pstmt.setInt(1, biggestId);
             rs = pstmt.executeQuery();
             rs.next();
             System.out.println("User with the biggest id:\n"
@@ -76,7 +75,7 @@ public class Main {
                         + " " + rs.getString("last_name")
                         + "(id = " + rs.getString("id")
                         + ", phone number = " + rs.getString("phone_number")
-            + ")");
+                        + ")");
 
             //task3
             rs = stmt.executeQuery("SELECT last_name FROM users ");
@@ -109,7 +108,7 @@ public class Main {
             Optional sum = addressesList.stream().reduce((a, b) -> a + b);
 
             if (sum.isPresent()) {
-                result = (int)sum.get();
+                result = (int) sum.get();
                 System.out.printf("\nAverage postal code:\n%.3f\n", (double) result / size);
             } else
                 System.out.println("ERROR with summation of postal codes");
