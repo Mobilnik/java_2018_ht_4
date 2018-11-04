@@ -29,14 +29,15 @@ public class Main {
 
     public static void main(String[] args) {
 
-        List<Integer> usersIdentificators = new ArrayList<>();
+
         List<String> lastNames = new ArrayList<>();
         List<Integer> addressesList = new ArrayList<>();
         List<Integer> extraAddresses = new ArrayList<>();
         Set<Integer> userAddresses = new HashSet<>();
 
         int size;
-        double result;
+        int biggestInt = 0;
+        int result;
 
         ResultSet rs;
 
@@ -44,15 +45,16 @@ public class Main {
                 "jdbc:postgresql://localhost:5432/users_database",
                 "daniilvorobyev", "postgres");
              Statement stmt = conn.createStatement()) {
-            Class.forName("org.postgresql.Driver");
+            //Class.forName("org.postgresql.Driver");
 
             //task1
             rs = stmt.executeQuery("SELECT id from users");
-            while (rs.next())
-                usersIdentificators.add(rs.getInt("id"));
-            Collections.reverse(usersIdentificators);
+            while (rs.next()) {
+                if (rs.getInt("id") > biggestInt)
+                    biggestInt = rs.getInt("id");
+            }
             PreparedStatement pstmt = conn.prepareStatement(" SELECT * FROM users where id = ?");
-            pstmt.setInt(1, usersIdentificators.get(0));
+            pstmt.setInt(1, biggestInt);
             rs = pstmt.executeQuery();
             rs.next();
             System.out.println("User with the biggest id:\n"
@@ -107,8 +109,8 @@ public class Main {
             Optional sum = addressesList.stream().reduce((a, b) -> a + b);
 
             if (sum.isPresent()) {
-                result = (double) sum.get();
-                System.out.printf("\nAverage postal code:\n%.3f\n", result / size);
+                result = (int)sum.get();
+                System.out.printf("\nAverage postal code:\n%.3f\n", (double) result / size);
             } else
                 System.out.println("ERROR with summation of postal codes");
 
@@ -137,7 +139,7 @@ public class Main {
                         + ", postal code = " + rs.getString("postal_code")
                         + ")");
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
