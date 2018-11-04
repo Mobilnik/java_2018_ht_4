@@ -21,13 +21,13 @@ public class BDWork {
     }
 
     private static double getAverageIndex (ResultSet rs) throws SQLException {
-        Integer summ = 0;
+        double summ = 0;
         Integer count = 0;
 
         try {
             while (rs.next()) {
                 try {
-                    summ += Integer.parseInt(rs.getString("postal_code"));
+                    summ += (double) Integer.parseInt(rs.getString("postal_code"));
                     count++;
                 } catch (NumberFormatException e) {
                 }
