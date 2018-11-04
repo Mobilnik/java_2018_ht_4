@@ -2,14 +2,8 @@ package ru.milandr.courses;
 
 //import com.sun.deploy.util.StringUtils;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 import java.lang.Object;
 
@@ -80,10 +74,46 @@ public class PostgreSQLJDBC {
                 sum+= indexs.get(j);
             System.out.println("The medium number of postal addresses: "+ sum/indexs.size());
 //----------------------------------------------------------------------------
+            ResultSet rs5 = stmt.executeQuery("SELECT addresses.id FROM addresses " +
+                    "RIGHT JOIN users " +
+                    "ON users.address_id = addresses.id");
+
+            Set<Integer> userAddresses = new HashSet<>();
+            List<Integer> extraAddresses = new ArrayList<>();
+            int size;
+            PreparedStatement pstmt;
+
+            while (rs5.next())
+                userAddresses.add(rs5.getInt("id"));
+            rs5 = stmt.executeQuery("SELECT id FROM addresses ");
+
+            while (rs5.next()) {
+                if (!userAddresses.contains(rs5.getInt("id")))
+                    extraAddresses.add(rs5.getInt("id"));
+            }
+
+            size = extraAddresses.size();
+            pstmt = c.prepareStatement(" SELECT * FROM addresses where id = ?");
+
+            for (int k = 0; k < size; k++) {
+                if (k == 0)
+                    System.out.println("\nExtra addresses:");
+
+                pstmt.setInt(1, extraAddresses.get(k));
+                rs5 = pstmt.executeQuery();
+                rs5.next();
+
+                System.out.println(rs5.getString("address")
+                        + "id = " + rs5.getString("id")
+                        + ", city = " + rs5.getString("city")
+                        + ", postal code = " + rs5.getString("postal_code"));
+            }
+//----------------------------------------------------------------------------
             rs1.close();
             rs2.close();
             rs3.close();
             rs4.close();
+            rs5.close();
             stmt.close();
             c.close();
 
