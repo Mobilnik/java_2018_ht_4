@@ -11,7 +11,7 @@ public class Application {
     private static ArrayList<Integer> userId = new ArrayList<>();
     private static ArrayList<String> userSurnames = new ArrayList<>();
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws SQLException {
         try {
             connection = DriverManager.getConnection(
                     "jdbc:postgresql://localhost:5432/users_database",
@@ -25,7 +25,7 @@ public class Application {
             findUserWithMaxId();
 
             System.out.println("----------------------------");
-            System.out.println("Users with address as Box 677, 8665 Ante Road:");
+            System.out.println("Users with address: Box 677, 8665 Ante Road:");
             findUsersWithAddress();
 
             System.out.println("----------------------------");
@@ -39,6 +39,7 @@ public class Application {
             System.out.println("----------------------------");
             System.out.println("Empty addresses:");
             findAddressWithoutUsers();
+
             statement.close();
         } catch (SQLException sqlEx) {
             sqlEx.printStackTrace();
@@ -52,7 +53,8 @@ public class Application {
     private static void findUserWithMaxId() {
         try {
             resultSet = statement.executeQuery("SELECT * FROM users");
-            preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE users.id = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM users " +
+                                                     "WHERE users.id = ?");
             while (resultSet.next()) {
                 userId.add(resultSet.getInt("id"));
             }
@@ -60,41 +62,35 @@ public class Application {
             preparedStatement.setInt(1, userId.get(0));
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                System.out.println("id = " + resultSet.getString("id") +
-                        "; Name Surname: " + resultSet.getString("first_name") +
-                        " " + resultSet.getString("last_name") + "; address_id: "
-                        + resultSet.getString("address_id") + "; phone_number: "
-                        + resultSet.getString("phone_number"));
+                printResultSet(resultSet);
             }
             preparedStatement.close();
             resultSet.close();
         } catch (SQLException sqlEx) {
             sqlEx.printStackTrace();
+            System.exit(-1);
         }
     }
 
     private static void findUsersWithAddress() {
         try {
-            resultSet = statement.executeQuery("SELECT * FROM users JOIN addresses ON " +
-                    "addresses.id = users.address_id"
-                    + " WHERE addresses.address =  'P.O. Box 677, 8665 Ante Road'");
+            resultSet = statement.executeQuery( "SELECT * FROM users JOIN addresses ON addresses.id = users.address_id " +
+                                "WHERE addresses.address =  'P.O. Box 677, 8665 Ante Road'");
             while (resultSet.next()) {
-                System.out.println("id = " + resultSet.getString("id") +
-                        "; Name Surname: " + resultSet.getString("first_name") +
-                        " " + resultSet.getString("last_name") + "; address_id: "
-                        + resultSet.getString("address_id") + "; phone_number: "
-                        + resultSet.getString("phone_number"));
+                printResultSet(resultSet);
             }
             resultSet.close();
         } catch (SQLException sqlEx) {
             sqlEx.printStackTrace();
+            System.exit(-1);
         }
     }
 
     private static void printUsersInOrder() {
         try {
             resultSet = statement.executeQuery("SELECT * FROM users");
-            preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE users.last_name = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM users" +
+                                                            " WHERE users.last_name = ?");
             while (resultSet.next()) {
                 userSurnames.add(resultSet.getString("last_name"));
             }
@@ -104,49 +100,61 @@ public class Application {
                 preparedStatement.setString(1, usersSurname);
                 resultSet = preparedStatement.executeQuery();
                 resultSet.next();
-                System.out.println("surname: " + resultSet.getString("last_name")
-                        + "; name: " + resultSet.getString("first_name")
-                        + "; id = " + resultSet.getString("id")
-                        + "; address_id: " + resultSet.getString("address_id")
-                        + "; phone_number: " + resultSet.getString("phone_number"));
+                printResultSet(resultSet);
             }
             resultSet.close();
             preparedStatement.close();
         } catch (SQLException sqlEx) {
             sqlEx.printStackTrace();
+            System.exit(-1);
         }
     }
 
     private static void countAveragePostalIndex() {
         try {
             double sum = 0;
-            int quatity = 0;
+            int quantity = 0;
             statement = connection.createStatement();
             resultSet = statement.executeQuery("SELECT * FROM addresses");
             while (resultSet.next()) {
                 try {
                     sum += (double) Integer.parseInt(resultSet.getString("postal_code"));
-                    quatity++;
-                } catch (NumberFormatException e) {
-                }
+                    quantity++;
+                } catch (NumberFormatException ex) {}
             }
-            System.out.printf("%.2f\n", sum / quatity);
+            System.out.printf("%.2f\n", sum / quantity);
         } catch (SQLException sqlEx) {
             sqlEx.printStackTrace();
+            System.exit(-1);
         }
     }
 
     private static void findAddressWithoutUsers() {
         try {
             Statement stmt = connection.createStatement();
-            resultSet = stmt.executeQuery("SELECT addresses.id, addresses.address FROM addresses\n" +
-                    "FULL OUTER JOIN users on addresses.id = users.address_id\n" +
-                    "WHERE users.address_id is null\n");
+            resultSet = stmt.executeQuery( "SELECT addresses.id, addresses.address " +
+            "FROM addresses\n FULL OUTER JOIN users on addresses.id = users.address_id\n" +
+            "WHERE users.address_id is null\n");
             while (resultSet.next()) {
                 System.out.println(resultSet.getString("address"));
             }
         } catch (SQLException sqlEx) {
             sqlEx.printStackTrace();
+            System.exit(-1);
         }
     }
+
+    private static void printResultSet(ResultSet resultSet) {
+        try {
+            System.out.println("surname: " + resultSet.getString("last_name")
+                    + "; name: " + resultSet.getString("first_name")
+                    + "; id = " + resultSet.getString("id")
+                    + "; address_id: " + resultSet.getString("address_id")
+                    + "; phone_number: " + resultSet.getString("phone_number"));
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.exit(-1);
+        }
+    }
+
 }
