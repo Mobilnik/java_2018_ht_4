@@ -131,8 +131,8 @@ public class Application {
 
     private static void findAddressWithoutUsers() {
         try {
-            Statement stmt = connection.createStatement();
-            resultSet = stmt.executeQuery( "SELECT addresses.id, addresses.address " +
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery( "SELECT addresses.id, addresses.address " +
             "FROM addresses\n FULL OUTER JOIN users on addresses.id = users.address_id\n" +
             "WHERE users.address_id is null\n");
             while (resultSet.next()) {
