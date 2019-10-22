@@ -1,10 +1,4 @@
 package ru.milandr.courses.pavlyuk;
-
-
-import com.sun.prism.impl.Disposer;
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
-
-import javax.swing.*;
 import java.sql.*;
 
 import java.util.*;
@@ -13,8 +7,11 @@ import java.util.stream.IntStream;
 public class CompDatabase {
 
 
-    public static boolean compareData(String db1Link, String db2Link, String table1Name,
-                                   String table2Name, String columns) {
+    public static boolean compareData(String db1Link,
+                                      String db2Link,
+                                      String table1Name,
+                                      String table2Name,
+                                      String columns) {
 
         HashMap<String, List<String>> table1 = new HashMap<>();
 
@@ -32,9 +29,9 @@ public class CompDatabase {
              Connection con2 = DriverManager.getConnection(db2Link,
                      "postgres", "postgres");
              Statement smt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                     ResultSet.CONCUR_UPDATABLE);
+                     ResultSet.CONCUR_READ_ONLY);
              Statement smt2 = con2.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                     ResultSet.CONCUR_UPDATABLE)) {
+                     ResultSet.CONCUR_READ_ONLY)) {
             Class.forName("org.postgresql.Driver");
 
             ResultSet rs = smt.executeQuery("SELECT * FROM " + table1Name);
@@ -71,6 +68,6 @@ public class CompDatabase {
             System.out.println("Проблема при работе с БД!");
             System.exit(0);
         }
-        System.out.println(table2.toString());
+
         return (table1.equals(table2)); }
 }
