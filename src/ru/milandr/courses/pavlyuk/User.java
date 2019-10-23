@@ -41,7 +41,7 @@ public class User {
                 "id='" + id + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", addressID='" + addressId + '\'' +
+                ", addressId='" + addressId + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 '}';
     }

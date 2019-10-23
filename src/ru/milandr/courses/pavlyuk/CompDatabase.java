@@ -1,4 +1,5 @@
 package ru.milandr.courses.pavlyuk;
+
 import java.sql.*;
 
 import java.util.*;
@@ -28,14 +29,16 @@ public class CompDatabase {
                 "postgres", "postgres");
              Connection con2 = DriverManager.getConnection(db2Link,
                      "postgres", "postgres");
-             Statement smt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+             Statement smt = con.createStatement(
+                     ResultSet.TYPE_SCROLL_SENSITIVE,
                      ResultSet.CONCUR_READ_ONLY);
-             Statement smt2 = con2.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+             Statement smt2 = con2.createStatement(
+                     ResultSet.TYPE_SCROLL_SENSITIVE,
                      ResultSet.CONCUR_READ_ONLY)) {
             Class.forName("org.postgresql.Driver");
 
-            ResultSet rs = smt.executeQuery("SELECT * FROM " + table1Name);
-            ResultSet rs2 = smt2.executeQuery("SELECT * FROM " + table2Name);
+            ResultSet rs = smt.executeQuery("SELECT " + columns + " FROM " + table1Name);
+            ResultSet rs2 = smt2.executeQuery("SELECT " + columns + " FROM " + table2Name);
 
             rs.last();
             int numberOfRowsTable1 = rs.getRow();
@@ -47,21 +50,24 @@ public class CompDatabase {
                 return false;
             }
 
-            IntStream stream = IntStream.range(1, numberOfRowsTable1);
-            stream.forEach(e -> requestedColumns.forEach(col -> {
-                try {
-                    rs.absolute(e);
-                    rs2.absolute(e);
-                    table1.get(col).add(rs.getString(col));
-                    table2.get(col).add(rs2.getString(col));
+            if (numberOfRowsTable1 == 0) {
+                return true;
+            }
 
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    System.out.println("Введенные колонки не найдены");
-                    System.exit(0);
-
-                }
-            }));
+            IntStream stream = IntStream.range(1, numberOfRowsTable1 + 1);
+            stream.forEach(e -> requestedColumns
+                    .forEach(col -> {
+                        try {
+                            rs.absolute(e);
+                            rs2.absolute(e);
+                            table1.get(col).add(rs.getString(col));
+                            table2.get(col).add(rs2.getString(col));
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                            System.out.println("Введенные колонки не найдены");
+                            System.exit(0);
+                        }
+                    }));
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
 
@@ -69,5 +75,6 @@ public class CompDatabase {
             System.exit(0);
         }
 
-        return (table1.equals(table2)); }
+        return (table1.equals(table2));
+    }
 }
