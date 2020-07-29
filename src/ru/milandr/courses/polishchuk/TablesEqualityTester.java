@@ -62,7 +62,6 @@ public class TablesEqualityTester {
         int size1 = Integer.parseInt(count1.getString(1));
         int size2 = Integer.parseInt(count2.getString(1));
 
-        System.out.format("s1: %d s2: %d\n", size1, size2);
         if (size1 != size2) {
             return false;
         }
@@ -77,8 +76,6 @@ public class TablesEqualityTester {
 
         ArrayList<ArrayList<String>> db1Entries = initArrayFromResultSet(resultSet1, size1);
         ArrayList<ArrayList<String>> db2Entries = initArrayFromResultSet(resultSet2, size2);
-
-        System.out.println(db1Entries.size());
 
         db1Entries.sort((t1, t2) ->
                 IntStream.range(1, columnsNum).reduce(0, (acc, j) -> acc == 0 ? t1.get(j).compareTo(t2.get(j - 1)) : acc)
